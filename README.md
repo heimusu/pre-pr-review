@@ -122,6 +122,8 @@ baseやIssueが未指定な場合は、追跡先・PR設定・デフォルトブ
 .agents/skills/review-history/  # Codex
 ```
 
+herdrなどでlinked worktree内からレビューする場合は、現在のworktreeに `review-history` がなければmain worktreeの同じパスも自動的に確認する。現在のworktreeとmain worktreeの両方にある場合は、現在のworktree側を優先する。
+
 **このファイルには過去の実PR番号やレビュー内容が入るため、プロジェクト固有の非公開情報として扱い、公開リポジトリにはコミットしないこと。**
 
 ## リポジトリ構成

@@ -23,7 +23,12 @@ disable-model-invocation: true
 
 各subagentには同じbase、差分範囲、利用可能な要件の所在、その役割定義だけを渡す。他のsubagentの指摘や結論は事前に渡さない。独立したコンテキストを作れる場合は使う。並列実行が可能なら並列に起動し、実行枠が4未満なら利用可能な最大数ごとにwave実行する。waveを跨いでも先行する結果を後続subagentに渡さない。
 
-リポジトリ固有の `review-history` skillがあれば、その指示と直接参照された事例を読む。内容は証拠ではなく探索仮説であることを明記し、`codebase-consistency-reviewer` / `bug-hunter` / `test-reviewer` にのみ渡す。各subagentには差分外の呼び出し側や対になる実装まで探索し、可能な範囲で検索結果や安全な実行結果を示すよう依頼する。実行不能な場合はその理由を記録する。
+リポジトリ固有の `review-history` skillを次の順で探す。実行環境に合わせて、Claude Codeでは `.claude/skills/review-history/SKILL.md`、Codexでは `.agents/skills/review-history/SKILL.md` を対象にする。
+
+1. 現在のworktreeルートの対応パス
+2. 1で見つからなければ、`git worktree list --porcelain` の先頭の `worktree` エントリからmain worktreeルートを特定し、現在のworktreeと異なる場合はその対応パス
+
+これにより、herdrなどが作成したlinked worktree内で実行した場合も、main worktreeにだけ置かれた `review-history` を参照する。現在のworktreeにあるものを優先し、他のlinked worktreeは探索しない。見つけた場合はその指示と直接参照された事例を読む。内容は証拠ではなく探索仮説であることを明記し、`codebase-consistency-reviewer` / `bug-hunter` / `test-reviewer` にのみ渡す。各subagentには差分外の呼び出し側や対になる実装まで探索し、可能な範囲で検索結果や安全な実行結果を示すよう依頼する。実行不能な場合はその理由を記録する。
 
 ## 統合
 
