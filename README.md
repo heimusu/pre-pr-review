@@ -122,7 +122,15 @@ baseやIssueが未指定な場合は、追跡先・PR設定・デフォルトブ
 .agents/skills/review-history/  # Codex
 ```
 
-herdrなどでlinked worktree内からレビューする場合は、現在のworktreeに `review-history` がなければmain worktreeの同じパスも自動的に確認する。現在のworktreeとmain worktreeの両方にある場合は、現在のworktree側を優先する。
+herdrなどでlinked worktree内からレビューする場合は、同梱の探索スクリプトが現在のworktreeを確認し、不在ならGitのworktree情報からmain worktreeの同じパスを確認する。両方にある場合は現在のworktree側を優先する。Python 3とGitが必要。
+
+手動で探索結果を確認する場合は、レビュー対象worktree内から以下を実行する（Claude Codeでは `--runtime claude`）。
+
+```sh
+python3 /path/to/pre-pr-review/skills/pre-pr-review/scripts/find_review_history.py --runtime codex
+```
+
+結果はJSONで返す。`found`（終了コード0）は参照元の絶対パス、`missing`（終了コード1）は不在、`error`（終了コード2）は探索・読み取り失敗を表す。探索したパスも返し、レビューのReview coverageに記録する。読み取り失敗やスクリプト未実行を「履歴なし」と扱わない。
 
 **このファイルには過去の実PR番号やレビュー内容が入るため、プロジェクト固有の非公開情報として扱い、公開リポジトリにはコミットしないこと。**
 
@@ -137,6 +145,7 @@ skills/
   pre-pr-review/
     SKILL.md                               共通オーケストレーション
     agents/openai.yaml                     Codexの明示起動ポリシー
+    scripts/find_review_history.py         worktree間の履歴探索
     references/                            generic subagent用の4役割定義
 docs/
   templates/review-history/                プロジェクトごとに作る任意拡張
